@@ -1,51 +1,58 @@
 <script lang="ts">
-  import { writable } from 'svelte/store';
-  import {
-    SvelteFlow,
-    Controls,
-    Background,
-    MiniMap,
-    type Node,
-    type Edge,
-  } from '@xyflow/svelte';
+    import { writable } from 'svelte/store';
+    import {
+        SvelteFlow,
+        Controls,
+        Background,
+        MiniMap,
+        type Node,
+        type Edge,
+    } from '@xyflow/svelte';
 
-  import '@xyflow/svelte/dist/style.css';
-  import { onMount } from "svelte";
-  import type { components } from "./types/api";
+    import '@xyflow/svelte/dist/style.css';
+    import { onMount } from 'svelte';
+    import type { components } from './types/api';
+    import SynchrotronNode from './components/SynchrotronNode.svelte';
 
-  async function getAllNodes() {
-    const response = await fetch('http://localhost:2031/nodes');
-    const nodeData: components['schemas']['Node'][] = await response.json();
-    return nodeData.map(node => ({
-      id: node.name,
-      position: { x: 0, y: 0 },
-      data: {
-        label: node.type
-      },
-    }));
-  }
+    async function getAllNodes() {
+        const response = await fetch('http://localhost:2031/nodes');
+        const nodeData: components['schemas']['Node'][] = await response.json();
+        return nodeData.map(node => ({
+            type: 'synchrotron_node',
+            id: node.name,
+            position: {
+                x: 0,
+                y: 0,
+            },
+            data: node,
+        }));
+    }
 
-  async function getAllEdges() {
-    const response = await fetch('http://localhost:2031/connections');
-    const connectionData: components['schemas']['Connection'][] = await response.json();
-    return connectionData.map(connection => ({
-      id: connection.source.node_name + '->' + connection.sink.node_name,
-      source: connection.source.node_name,
-      target: connection.sink.node_name,
-    }));
-  }
+    async function getAllEdges(): Promise<Edge[]> {
+        const response = await fetch('http://localhost:2031/connections');
+        const connectionData: components['schemas']['Connection'][] = await response.json();
+        return connectionData.map(connection => ({
+            id: connection.source.node_name + '->' + connection.sink.node_name,
+            source: connection.source.node_name,
+            target: connection.sink.node_name,
+        }));
+    }
 
-  const nodes = writable<Node[]>([]);
-  const edges = writable<Edge[]>([]);
+    const nodes = writable<Node[]>([]);
+    const edges = writable<Edge[]>([]);
 
-  onMount(async function () {
-      $nodes = await getAllNodes();
-      $edges = await getAllEdges();
-  })
+    const nodeTypes = {
+        synchrotron_node: SynchrotronNode,
+    };
+
+    onMount(async function () {
+        $nodes = await getAllNodes();
+        $edges = await getAllEdges();
+    })
 </script>
 
 <div style:height="100vh">
-  <SvelteFlow {nodes} {edges} fitView>
+  <SvelteFlow {nodeTypes} {nodes} {edges} fitView>
     <Controls />
     <Background />
     <MiniMap />
