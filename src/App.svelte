@@ -22,7 +22,7 @@
       data: {
         label: node.type
       },
-    }))
+    }));
   }
 
   async function getAllEdges() {
@@ -32,7 +32,7 @@
       id: connection.source.node_name + '->' + connection.sink.node_name,
       source: connection.source.node_name,
       target: connection.sink.node_name,
-    }))
+    }));
   }
 
   const nodes = writable<Node[]>([]);
