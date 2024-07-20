@@ -20,7 +20,7 @@
     "vite": "^4.5.3"
   },
   "dependencies": {
-    "@xyflow/svelte": "^0.1.11"
+    "@xyflow/svelte": "^0.1.13"
   },
   "trustedDependencies": [
     "svelte-preprocess"
