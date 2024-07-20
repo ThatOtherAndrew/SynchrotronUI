@@ -20,11 +20,8 @@
         return nodeData.map(node => ({
             type: 'synchrotron_node',
             id: node.name,
-            position: {
-                x: 0,
-                y: 0,
-            },
-            data: node,
+            position: { x: 0, y: 0 },
+            data: { nodeData: writable(node) },
         }));
     }
 
@@ -34,7 +31,10 @@
         return connectionData.map(connection => ({
             id: connection.source.node_name + '->' + connection.sink.node_name,
             source: connection.source.node_name,
+            sourceHandle: connection.source.port_name,
             target: connection.sink.node_name,
+            targetHandle: connection.sink.port_name,
+            animated: true,
         }));
     }
 
@@ -45,14 +45,18 @@
         synchrotron_node: SynchrotronNode,
     };
 
+    const proOptions = {
+        hideAttribution: true,
+    };
+
     onMount(async function () {
         $nodes = await getAllNodes();
         $edges = await getAllEdges();
-    })
+    });
 </script>
 
 <div style:height="100vh">
-  <SvelteFlow {nodeTypes} {nodes} {edges} fitView>
+  <SvelteFlow {nodeTypes} {nodes} {edges} {proOptions} fitView>
     <Controls />
     <Background />
     <MiniMap />
