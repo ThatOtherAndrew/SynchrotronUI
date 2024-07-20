@@ -123,6 +123,8 @@ export interface components {
             inputs: components["schemas"]["Input"][];
             /** Outputs */
             outputs: components["schemas"]["Output"][];
+            /** Exports */
+            exports: Record<string, never>;
         };
         /** NodeInitData */
         NodeInitData: {
