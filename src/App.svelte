@@ -10,11 +10,12 @@
   } from '@xyflow/svelte';
 
   import '@xyflow/svelte/dist/style.css';
-  import {onMount} from "svelte";
+  import { onMount } from "svelte";
+  import type { components } from "./types/api";
 
   async function getAllNodes() {
     const response = await fetch('http://localhost:2031/nodes');
-    const nodeData = await response.json();
+    const nodeData: components['schemas']['Node'][] = await response.json();
     return nodeData.map(node => ({
       id: node.name,
       position: { x: 0, y: 0 },
@@ -26,7 +27,7 @@
 
   async function getAllEdges() {
     const response = await fetch('http://localhost:2031/connections');
-    const connectionData = await response.json();
+    const connectionData: components['schemas']['Connection'][] = await response.json();
     return connectionData.map(connection => ({
       id: connection.source.node_name + '->' + connection.sink.node_name,
       source: connection.source.node_name,
