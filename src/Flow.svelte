@@ -1,14 +1,11 @@
 <script lang="ts">
     import { writable } from 'svelte/store';
-    import ELK from 'elkjs/lib/elk.bundled.js';
     import {
         SvelteFlow,
         Controls,
         Background,
         MiniMap,
         Panel,
-        Position,
-        useSvelteFlow,
         type Node,
         type Edge,
         type ColorMode,
@@ -19,8 +16,6 @@
     import SynchrotronNode from './components/SynchrotronNode.svelte';
 
     import '@xyflow/svelte/dist/style.css';
-
-    const { fitView } = useSvelteFlow();
 
     async function getAllNodes() {
         const response = await fetch('http://localhost:2031/nodes');
@@ -47,57 +42,7 @@
 
     const nodes = writable<Node[]>([]);
     const edges = writable<Edge[]>([]);
-    const elk = new ELK();
     let theme: ColorMode = 'system';
-
-    function getLayoutedElements(nodes: Node[], edges: Edge[], options = {}) {
-        const graph = {
-            id: 'root',
-            layoutOptions: options,
-            children: nodes.map((node) => ({
-                ...node,
-                targetPosition: Position.Left,
-                sourcePosition: Position.Right,
-
-                // Hardcode a width and height for elk to use when layouting.
-                width: node.width || 100,
-                height: node.height || 50,
-            })),
-            edges: edges,
-        };
-
-        return elk
-            .layout(graph)
-            .then(layoutedGraph => ({
-                nodes: layoutedGraph.children?.map(node => ({
-                    ...node,
-                    position: { x: node.x, y: node.y },
-                })),
-
-                edges: layoutedGraph.edges,
-            }))
-            .catch(console.error);
-    }
-
-    function onLayout() {
-        const ns = $nodes;
-        const es = $edges;
-        const elkOptions = {
-            'elk.direction': 'RIGHT',
-            'elk.algorithm': 'layered',
-            'elk.layered.spacing.nodeNodeBetweenLayers': '100',
-            'elk.spacing.nodeNode': '80',
-        };
-
-        getLayoutedElements(ns, es, elkOptions).then(({ nodes: layoutedNodes, edges: layoutedEdges }) => {
-            $nodes = layoutedNodes;
-            $edges = layoutedEdges;
-
-            fitView();
-
-            window.requestAnimationFrame(() => fitView());
-        });
-    }
 
     onMount(async function () {
         $nodes = await getAllNodes();
@@ -115,7 +60,7 @@
         defaultEdgeOptions={{
             animated: true,
             style: 'stroke: var(--xy-connectionline-stroke-default)',
-      }}
+        }}
         proOptions={{ hideAttribution: true }}
     >
         <Controls />
@@ -129,7 +74,6 @@
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
             </select>
-            <button on:click={onLayout}>Auto arrange nodes</button>
         </Panel>
     </SvelteFlow>
 </div>

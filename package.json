@@ -22,8 +22,7 @@
     "vite": "^4.5.3"
   },
   "dependencies": {
-    "@xyflow/svelte": "^0.1.13",
-    "elkjs": "^0.9.3"
+    "@xyflow/svelte": "^0.1.13"
   },
   "trustedDependencies": [
     "svelte-preprocess"
