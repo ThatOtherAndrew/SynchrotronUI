@@ -42,6 +42,16 @@
         }));
     }
 
+    async function startRendering() {
+        isRendering = true;
+        await fetch('http://localhost:2031/start');
+    }
+
+    async function stopRendering() {
+        isRendering = false;
+        await fetch('http://localhost:2031/stop');
+    }
+
     async function onConnect(connection: Connection) {
         await fetch('http://localhost:2031/connections', {
             method: 'PATCH',
@@ -61,7 +71,13 @@
 
     const nodes = writable<Node[]>([]);
     const edges = writable<Edge[]>([]);
+    let isRendering = false;
     let theme: ColorMode = 'system';
+
+    $: {
+        $edges.forEach(edge => edge.animated = isRendering);
+        $edges = $edges;
+    }
 
     onMount(async function () {
         $nodes = await getAllNodes();
@@ -78,7 +94,6 @@
             colorMode={theme}
             nodeTypes={{ synchrotron_node: SynchrotronNode }}
             defaultEdgeOptions={{
-                animated: true,
                 style: 'stroke: var(--xy-connectionline-stroke-default)',
             }}
             proOptions={{ hideAttribution: true }}
@@ -90,6 +105,10 @@
             <MiniMap />
 
             <Panel style="color: var(--xy-node-color-default)">
+                Rendering:
+                <button on:click={startRendering}>Start</button>
+                <button on:click={stopRendering}>Stop</button>
+                <br>
                 Theme:
                 <select bind:value={theme}>
                     <option value="system">System</option>
