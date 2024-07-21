@@ -5,8 +5,10 @@
         Controls,
         Background,
         MiniMap,
+        Panel,
         type Node,
         type Edge,
+        type ColorMode,
     } from '@xyflow/svelte';
 
     import '@xyflow/svelte/dist/style.css';
@@ -20,8 +22,8 @@
         return nodeData.map(node => ({
             type: 'synchrotron_node',
             id: node.name,
-            position: { x: 0, y: 0 },
-            data: { nodeData: writable(node) },
+            position: {x: 0, y: 0},
+            data: {nodeData: writable(node)},
         }));
     }
 
@@ -34,20 +36,12 @@
             sourceHandle: connection.source.port_name,
             target: connection.sink.node_name,
             targetHandle: connection.sink.port_name,
-            animated: true,
         }));
     }
 
     const nodes = writable<Node[]>([]);
     const edges = writable<Edge[]>([]);
-
-    const nodeTypes = {
-        synchrotron_node: SynchrotronNode,
-    };
-
-    const proOptions = {
-        hideAttribution: true,
-    };
+    let theme: ColorMode = 'system';
 
     onMount(async function () {
         $nodes = await getAllNodes();
@@ -56,9 +50,26 @@
 </script>
 
 <div style:height="100vh">
-  <SvelteFlow {nodeTypes} {nodes} {edges} {proOptions} fitView>
+  <SvelteFlow
+    fitView
+    {nodes}
+    {edges}
+    colorMode={theme}
+    nodeTypes={{ synchrotron_node: SynchrotronNode }}
+    defaultEdgeOptions={{ animated: true }}
+    proOptions={{ hideAttribution: true }}
+  >
     <Controls />
     <Background />
     <MiniMap />
+
+    <Panel style="color: var(--xy-node-color-default)">
+      Theme:
+      <select bind:value={theme}>
+        <option value="system" selected={true}>System</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </Panel>
   </SvelteFlow>
 </div>

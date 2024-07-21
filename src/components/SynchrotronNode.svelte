@@ -17,30 +17,54 @@
 </script>
 
 <div class="node">
-  {#each $nodeData.inputs as input}
-    <Handle id={input.port_name} type="target" position={Position.Left} />
-  {/each}
-  <div>
+  <div class="header">
     <strong>{$nodeData.type}</strong> {$nodeData.name}
-    <table>
+  </div>
+  {#if (Object.keys($nodeData.exports).length)}
+    <table class="exports">
       {#each Object.entries($nodeData.exports) as [key, value]}
         <tr>
           <th>{key}</th>
+          <td>&nbsp;=&nbsp;</td>
           <td>{value}</td>
         </tr>
       {/each}
     </table>
-  </div>
+  {/if}
+
+  {#each $nodeData.inputs as input}
+    <Handle id={input.port_name} type="target" position={Position.Left} />
+  {/each}
   {#each $nodeData.outputs as output}
     <Handle id={output.port_name} type="source" position={Position.Right} />
   {/each}
 </div>
 
-<style>
+<style lang="scss">
     .node {
-        padding: 1rem;
-        background: #eee;
+        color: var(--xy-node-color-default);
+        background-color: #eee;
         border-radius: .3rem;
-        font-size: 0.7rem;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: .7rem;
+        overflow: clip;
+
+        > * {
+            padding: .3em 1em;
+        }
+    }
+
+    .header {
+        background-color: #ccc;
+    }
+
+    :global(.svelte-flow.dark) {
+        .node {
+            background-color: #333
+        }
+
+        .header {
+            background-color: #555;
+        }
     }
 </style>
