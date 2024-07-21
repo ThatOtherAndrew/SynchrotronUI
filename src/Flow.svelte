@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from 'svelte';
     import { writable } from 'svelte/store';
     import {
         SvelteFlow,
@@ -11,11 +12,10 @@
         type ColorMode,
     } from '@xyflow/svelte';
 
-    import { onMount } from 'svelte';
-    import type { components } from './types/api';
-    import SynchrotronNode from './components/SynchrotronNode.svelte';
-
     import '@xyflow/svelte/dist/style.css';
+
+    import SynchrotronNode from './components/SynchrotronNode.svelte';
+    import type { components } from './types/api';
 
     async function getAllNodes() {
         const response = await fetch('http://localhost:2031/nodes');
