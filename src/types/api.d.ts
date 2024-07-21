@@ -67,7 +67,8 @@ export interface paths {
         put?: never;
         /** Create Node */
         post: operations["create_node_nodes__node_name__post"];
-        delete?: never;
+        /** Remove Node */
+        delete: operations["remove_node_nodes__node_name__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -89,6 +90,23 @@ export interface paths {
         head?: never;
         /** Add Connection */
         patch: operations["add_connection_connections_patch"];
+        trace?: never;
+    };
+    "/connections/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove Connection */
+        delete: operations["remove_connection_connections__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/": {
@@ -329,6 +347,37 @@ export interface operations {
             };
         };
     };
+    remove_node_nodes__node_name__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Node"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_connections_connections_get: {
         parameters: {
             query?: never;
@@ -369,6 +418,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Connection"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_connection_connections__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Connection"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Connection"] | null;
                 };
             };
             /** @description Validation Error */
