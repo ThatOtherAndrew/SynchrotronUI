@@ -24,13 +24,6 @@
             </Handle>
         {/each}
     </div>
-    <div class="handle-container outputs">
-        {#each $nodeData.outputs as output}
-            <Handle id={output.port_name} type="source" position={Position.Right} class="handle">
-                <span class="handle-label">{output.port_name}</span>
-            </Handle>
-        {/each}
-    </div>
 
     <div class="node-content">
         <div class="header">
@@ -48,37 +41,56 @@
             </table>
         {/if}
     </div>
+
+    <div class="handle-container outputs">
+        {#each $nodeData.outputs as output}
+            <Handle id={output.port_name} type="source" position={Position.Right} class="handle">
+                <span class="handle-label">{output.port_name}</span>
+            </Handle>
+        {/each}
+    </div>
 </div>
 
 <style lang="scss">
     .node {
         color: var(--colour-fg-default);
-        background-color: var(--colour-bg-default);
-        border-radius: .3rem;
         font-size: .7rem;
-        overflow: clip;
         width: fit-content;
         height: fit-content;
+        display: flex;
+    }
+
+    .node-content {
+        background-color: var(--colour-bg-accent);
+        border-radius: .3rem;
+        overflow: clip;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
 
     .node-content > * {
+        background-color: var(--colour-bg-default);
+        width: 100%;
         padding: .3em 1em;
     }
 
     .header {
         background-color: var(--colour-bg-accent);
+        width: max-content;
+        text-align: center;
     }
 
     .handle-container {
-        position: absolute;
-        height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
 
         :global(.handle) {
-            position: static;
-            margin: 5px 0;
+            position: relative;
+            inset: 0;
+            margin: 3px 0;
         }
     }
 
@@ -89,12 +101,12 @@
         bottom: .5em;
         font-style: italic;
         letter-spacing: -.05em;
+        pointer-events: none;
     }
 
     .inputs {
-        left: 0;
         :global(.handle) {
-            transform: translate(-50%, 0);
+            transform: translate(50%, 0);
         }
         .handle-label {
             right: 1em;
@@ -102,9 +114,8 @@
     }
 
     .outputs {
-        right: 0;
         :global(.handle) {
-            transform: translate(50%, 0);
+            transform: translate(-50%, 0);
         }
         .handle-label {
             left: 1em;
