@@ -1,3 +1,20 @@
+:root {
+    --colour-fg-default: #222;
+    --colour-fg-muted: #888;
+
+    --colour-bg-default: #eee;
+    --colour-bg-accent: #ccc;
+}
+
+.svelte-flow.dark {
+    --colour-fg-default: #eee;
+    --colour-fg-muted: #aaa;
+
+    --colour-bg-default: #333;
+    --colour-bg-accent: #555;
+}
+
 body {
     margin: 0;
+    font-family: 'JetBrains Mono', monospace;
 }
