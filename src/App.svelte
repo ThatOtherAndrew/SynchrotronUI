@@ -69,6 +69,28 @@
         });
     }
 
+    async function onDelete(params: { nodes: Node[], edges: Edge[] }) {
+        for (const node of params.nodes) {
+            await fetch(`http://localhost:2031/nodes/${node.id}`, { method: 'DELETE' });
+        }
+        for (const edge of params.edges) {
+            await fetch('http://localhost:2031/connections', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    source: {
+                        node_name: edge.source,
+                        port_name: edge.sourceHandle,
+                    },
+                    sink: {
+                        node_name: edge.target,
+                        port_name: edge.targetHandle,
+                    },
+                }),
+            });
+        }
+    }
+
     const nodes = writable<Node[]>([]);
     const edges = writable<Edge[]>([]);
     let isRendering = false;
@@ -99,6 +121,7 @@
             proOptions={{ hideAttribution: true }}
 
             onconnect={onConnect}
+            ondelete={onDelete}
         >
             <Controls />
             <Background />
