@@ -48,6 +48,7 @@
         font-family: 'JetBrains Mono', monospace;
         font-size: .7rem;
         overflow: clip;
+        width: fit-content;
 
         > * {
             padding: .3em 1em;
