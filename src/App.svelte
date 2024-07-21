@@ -22,8 +22,8 @@
         return nodeData.map(node => ({
             type: 'synchrotron_node',
             id: node.name,
-            position: {x: 0, y: 0},
-            data: {nodeData: writable(node)},
+            position: { x: 0, y: 0 },
+            data: { nodeData: writable(node) },
         }));
     }
 
@@ -50,26 +50,29 @@
 </script>
 
 <div style:height="100vh">
-  <SvelteFlow
-    fitView
-    {nodes}
-    {edges}
-    colorMode={theme}
-    nodeTypes={{ synchrotron_node: SynchrotronNode }}
-    defaultEdgeOptions={{ animated: true }}
-    proOptions={{ hideAttribution: true }}
-  >
-    <Controls />
-    <Background />
-    <MiniMap />
+    <SvelteFlow
+        fitView
+        {nodes}
+        {edges}
+        colorMode={theme}
+        nodeTypes={{ synchrotron_node: SynchrotronNode }}
+        defaultEdgeOptions={{
+            animated: true,
+            style: 'stroke: var(--xy-connectionline-stroke-default)',
+      }}
+        proOptions={{ hideAttribution: true }}
+    >
+        <Controls />
+        <Background />
+        <MiniMap />
 
-    <Panel style="color: var(--xy-node-color-default)">
-      Theme:
-      <select bind:value={theme}>
-        <option value="system" selected={true}>System</option>
-        <option value="light">Light</option>
-        <option value="dark">Dark</option>
-      </select>
-    </Panel>
-  </SvelteFlow>
+        <Panel style="color: var(--xy-node-color-default)">
+            Theme:
+            <select bind:value={theme}>
+                <option value="system">System</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+            </select>
+        </Panel>
+    </SvelteFlow>
 </div>

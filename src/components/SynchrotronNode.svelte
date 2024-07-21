@@ -10,34 +10,34 @@
     // noinspection JSUnusedGlobalSymbols
     type $$Props = NodeProps<Node<Data>>;
 
-    export let data: Data
-    const {nodeData} = data;
+    export let data: Data;
+    const { nodeData } = data;
 
     $$restProps;
 </script>
 
 <div class="node">
-  <div class="header">
-    <strong>{$nodeData.type}</strong> {$nodeData.name}
-  </div>
-  {#if (Object.keys($nodeData.exports).length)}
-    <table class="exports">
-      {#each Object.entries($nodeData.exports) as [key, value]}
-        <tr>
-          <th>{key}</th>
-          <td>&nbsp;=&nbsp;</td>
-          <td>{value}</td>
-        </tr>
-      {/each}
-    </table>
-  {/if}
+    <div class="header">
+        <strong>{$nodeData.type}</strong> {$nodeData.name}
+    </div>
+    {#if (Object.keys($nodeData.exports).length)}
+        <table class="exports">
+            {#each Object.entries($nodeData.exports) as [key, value]}
+                <tr>
+                    <th>{key}</th>
+                    <td>&nbsp;=&nbsp;</td>
+                    <td>{value}</td>
+                </tr>
+            {/each}
+        </table>
+    {/if}
 
-  {#each $nodeData.inputs as input}
-    <Handle id={input.port_name} type="target" position={Position.Left} />
-  {/each}
-  {#each $nodeData.outputs as output}
-    <Handle id={output.port_name} type="source" position={Position.Right} />
-  {/each}
+    {#each $nodeData.inputs as input}
+        <Handle id={input.port_name} type="target" position={Position.Left} />
+    {/each}
+    {#each $nodeData.outputs as output}
+        <Handle id={output.port_name} type="source" position={Position.Right} />
+    {/each}
 </div>
 
 <style lang="scss">
