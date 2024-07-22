@@ -34,7 +34,10 @@
         const response = await fetch('http://localhost:2031/connections');
         const connectionData: components['schemas']['Connection'][] = await response.json();
         return connectionData.map(connection => ({
-            id: connection.source.node_name + '->' + connection.sink.node_name,
+            id: (
+                `${connection.source.node_name}.${connection.source.port_name}`
+                + `->${connection.sink.node_name}.${connection.sink.port_name}`
+            ),
             source: connection.source.node_name,
             sourceHandle: connection.source.port_name,
             target: connection.sink.node_name,
