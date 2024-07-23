@@ -94,6 +94,16 @@
         }
     }
 
+    async function loadGraph() {
+        $nodes = await getAllNodes();
+        $edges = await getAllEdges();
+    }
+
+    async function resetGraph() {
+        $nodePositions = {};
+        await loadGraph();
+    }
+
     const nodes = writable<Node[]>([]);
     const edges = writable<Edge[]>([]);
     let isRendering = false;
@@ -109,8 +119,7 @@
     }
 
     onMount(async function () {
-        $nodes = await getAllNodes();
-        $edges = await getAllEdges();
+        await loadGraph();
         nodes.subscribe(() => {
             $nodePositions = Object.fromEntries($nodes.map(node => [node.id, node.position]));
         });
@@ -147,5 +156,8 @@
             <option value="dark">Dark</option>
         </select>
         <br>
+        Graph:
+        <button on:click={loadGraph}>Reload</button>
+        <button on:click={resetGraph}>Reset</button>
     </Panel>
 </SvelteFlow>
