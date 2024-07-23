@@ -11,6 +11,7 @@
         type Edge,
         type ColorMode,
         type Connection,
+        type XYPosition,
     } from '@xyflow/svelte';
 
     import '@xyflow/svelte/dist/style.css';
@@ -24,7 +25,7 @@
         return nodeData.map(node => ({
             type: 'synchrotron_node',
             id: node.name,
-            position: { x: 0, y: 0 },
+            position: $nodePositions[node.name] || { x: 0, y: 0 },
             data: { nodeData: writable(node) },
         }));
     }
@@ -98,6 +99,10 @@
     let isRendering = false;
     let theme: ColorMode = 'system';
 
+    type NodePositions = { [key: string]: XYPosition };
+    const nodePositions = writable<NodePositions>(JSON.parse(localStorage.getItem('nodePositions') || '{}'));
+    $: localStorage.setItem('nodePositions', JSON.stringify($nodePositions));
+
     $: {
         $edges.forEach(edge => edge.animated = isRendering);
         $edges = $edges;
@@ -106,6 +111,9 @@
     onMount(async function () {
         $nodes = await getAllNodes();
         $edges = await getAllEdges();
+        nodes.subscribe(() => {
+            $nodePositions = Object.fromEntries($nodes.map(node => [node.id, node.position]));
+        });
     });
 </script>
 
@@ -138,5 +146,6 @@
             <option value="light">Light</option>
             <option value="dark">Dark</option>
         </select>
+        <br>
     </Panel>
 </SvelteFlow>
