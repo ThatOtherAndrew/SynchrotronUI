@@ -15,6 +15,7 @@
     } from '@xyflow/svelte';
 
     import '@xyflow/svelte/dist/style.css';
+    import Console from './Console.svelte';
 
     import SynchrotronNode from './SynchrotronNode.svelte';
     import type { components } from '../types/api';
@@ -160,4 +161,5 @@
         <button on:click={loadGraph}>Reload</button>
         <button on:click={resetGraph}>Reset</button>
     </Panel>
+    <Console on:reload={loadGraph} />
 </SvelteFlow>
