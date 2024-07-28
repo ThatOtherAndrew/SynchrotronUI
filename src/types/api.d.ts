@@ -55,6 +55,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export State */
+        get: operations["export_state_export_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/nodes": {
         parameters: {
             query?: never;
@@ -65,7 +82,8 @@ export interface paths {
         /** Get Nodes */
         get: operations["get_nodes_nodes_get"];
         put?: never;
-        post?: never;
+        /** Create Unnamed Node */
+        post: operations["create_unnamed_node_nodes_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -162,15 +180,6 @@ export interface components {
             /** Exports */
             exports: Record<string, never>;
         };
-        /** NodeInitData */
-        NodeInitData: {
-            /** Type */
-            type: string;
-            /** Args */
-            args: unknown[];
-            /** Kwargs */
-            kwargs: Record<string, never>;
-        };
         /** Output */
         Output: {
             /** Node Name */
@@ -265,6 +274,26 @@ export interface operations {
             };
         };
     };
+    export_state_export_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+        };
+    };
     get_nodes_nodes_get: {
         parameters: {
             query?: never;
@@ -281,6 +310,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Node"][];
+                };
+            };
+        };
+    };
+    create_unnamed_node_nodes_post: {
+        parameters: {
+            query: {
+                type: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Node"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -318,18 +378,16 @@ export interface operations {
     };
     create_node_nodes__node_name__post: {
         parameters: {
-            query?: never;
+            query: {
+                type: string;
+            };
             header?: never;
             path: {
                 node_name: string;
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["NodeInitData"];
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {
