@@ -165,6 +165,8 @@ export interface components {
             node_name: string;
             /** Port Name */
             port_name: string;
+            /** Type */
+            type: string;
             source: components["schemas"]["Port"] | null;
         };
         /** Node */
@@ -186,6 +188,8 @@ export interface components {
             node_name: string;
             /** Port Name */
             port_name: string;
+            /** Type */
+            type: string;
             /** Sinks */
             sinks: components["schemas"]["Port"][];
         };
