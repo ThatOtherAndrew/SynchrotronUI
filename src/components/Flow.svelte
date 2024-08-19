@@ -105,7 +105,6 @@
         await loadGraph();
     }
 
-    async function loadFile() {}
     async function saveFile() {
         const response = await fetch('http://localhost:2031/export');
         const fileContent = new Blob([await response.json()], { type: 'text/plain' });
@@ -119,10 +118,17 @@
         URL.revokeObjectURL(url);
     }
 
+    async function loadFile() {
+        const fileContent = await files[0].text();
+        await fetch('http://localhost:2031/execute', { method: 'POST', body: fileContent });
+        await loadGraph();
+    }
+
     const nodes = writable<Node[]>([]);
     const edges = writable<Edge[]>([]);
     let isRendering = false;
     let theme: ColorMode = 'system';
+    let files: FileList;
 
     type NodePositions = { [key: string]: XYPosition };
     const nodePositions = writable<NodePositions>(JSON.parse(localStorage.getItem('nodePositions') || '{}'));
@@ -177,7 +183,7 @@
         <br>
         File:
         <div style="display: inline-block; vertical-align: top;">
-            <input type="file" id="file">
+            <input type="file" bind:files>
             <br>
             <button on:click={saveFile}>Save</button>
             <button on:click={loadFile}>Load</button>
