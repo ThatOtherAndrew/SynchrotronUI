@@ -105,6 +105,20 @@
         await loadGraph();
     }
 
+    async function loadFile() {}
+    async function saveFile() {
+        const response = await fetch('http://localhost:2031/export');
+        const fileContent = new Blob([await response.json()], { type: 'text/plain' });
+        const url = URL.createObjectURL(fileContent);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'synchrotron_scene.sui';
+        a.click();
+
+        URL.revokeObjectURL(url);
+    }
+
     const nodes = writable<Node[]>([]);
     const edges = writable<Edge[]>([]);
     let isRendering = false;
@@ -160,6 +174,14 @@
         Graph:
         <button on:click={loadGraph}>Reload</button>
         <button on:click={resetGraph}>Reset</button>
+        <br>
+        File:
+        <div style="display: inline-block; vertical-align: top;">
+            <input type="file" id="file">
+            <br>
+            <button on:click={saveFile}>Save</button>
+            <button on:click={loadFile}>Load</button>
+        </div>
     </Panel>
     <Console on:reload={loadGraph} />
 </SvelteFlow>
