@@ -122,6 +122,12 @@
         if (files === undefined) return;
 
         const fileContent = await files[0].text();
+        const nodePositionRegex: RegExp = /(?<=\/\*\*\*)\s*{.*}\s*(?=\*\*\*\/)/m;
+        const nodePositionsString = fileContent.match(nodePositionRegex);
+        if (nodePositionsString) {
+            $nodePositions = JSON.parse(nodePositionsString[0].trim());
+        }
+
         await fetch('http://localhost:2031/execute', { method: 'POST', body: fileContent });
         await loadGraph();
     }
