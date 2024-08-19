@@ -107,8 +107,8 @@
 
     async function saveFile() {
         const response = await fetch('http://localhost:2031/export');
-        const fileContent = new Blob([await response.json()], { type: 'text/plain' });
-        const url = URL.createObjectURL(fileContent);
+        let fileContent = `/***\n${JSON.stringify($nodePositions)}\n***/\n\n${await response.json()}`;
+        const url = URL.createObjectURL(new Blob([fileContent], { type: 'text/plain' }));
 
         const a = document.createElement('a');
         a.href = url;
@@ -119,6 +119,8 @@
     }
 
     async function loadFile() {
+        if (files === undefined) return;
+
         const fileContent = await files[0].text();
         await fetch('http://localhost:2031/execute', { method: 'POST', body: fileContent });
         await loadGraph();
@@ -128,7 +130,7 @@
     const edges = writable<Edge[]>([]);
     let isRendering = false;
     let theme: ColorMode = 'system';
-    let files: FileList;
+    let files: FileList | undefined;
 
     type NodePositions = { [key: string]: XYPosition };
     const nodePositions = writable<NodePositions>(JSON.parse(localStorage.getItem('nodePositions') || '{}'));
@@ -183,7 +185,7 @@
         <br>
         File:
         <div style="display: inline-block; vertical-align: top;">
-            <input type="file" bind:files>
+            <input type="file" accept=".syn,.sui" bind:files>
             <br>
             <button on:click={saveFile}>Save</button>
             <button on:click={loadFile}>Load</button>
