@@ -105,6 +105,11 @@
         await loadGraph();
     }
 
+    async function clearGraph() {
+        await fetch('http://localhost:2031/clear');
+        await loadGraph();
+    }
+
     async function saveFile() {
         const response = await fetch('http://localhost:2031/export');
         let fileContent = `/***\n${JSON.stringify($nodePositions)}\n***/\n\n${await response.json()}`;
@@ -128,7 +133,7 @@
             $nodePositions = JSON.parse(nodePositionsString[0].trim());
         }
 
-        await fetch('http://localhost:2031/execute', { method: 'POST', body: fileContent });
+        await fetch('http://localhost:2031/execute', { method: 'POST', body: `clear;\n\n${fileContent}` });
         await loadGraph();
     }
 
@@ -187,7 +192,8 @@
         <br>
         Graph:
         <button on:click={loadGraph}>Reload</button>
-        <button on:click={resetGraph}>Reset</button>
+        <button on:click={resetGraph}>Reset Positions</button>
+        <button on:click={clearGraph}>Clear</button>
         <br>
         File:
         <div style="display: inline-block; vertical-align: top;">
