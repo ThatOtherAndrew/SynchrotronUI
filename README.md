@@ -2,7 +2,7 @@
 
 Node graph editor frontend for [Synchrotron](https://github.com/ThatOtherAndrew/Synchrotron), created with Svelte Flow
 
-![](https://i.imgur.com/MXSbFcv.png)](https://i.imgur.com/MXSbFcv.png)
+[![SynchrotronUI demo screenshot](https://i.imgur.com/MXSbFcv.png)](https://i.imgur.com/MXSbFcv.png)
 
 ---
 
