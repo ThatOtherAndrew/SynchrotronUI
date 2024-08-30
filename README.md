@@ -2,7 +2,15 @@
 
 Node graph editor frontend for [Synchrotron](https://github.com/ThatOtherAndrew/Synchrotron), created with Svelte Flow
 
+![](https://i.imgur.com/MXSbFcv.png)](https://i.imgur.com/MXSbFcv.png)
+
 ---
+
+## Demo
+
+| [Hack Club Showcase - Synchrotron](https://youtu.be/wlhBz62t2zE)                                                                 |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| [![Hack Club Showcase - Synchrotron](https://img.youtube.com/vi/wlhBz62t2zE/0.jpg)](https://www.youtube.com/watch?v=wlhBz62t2zE) |
 
 ## Build
 
