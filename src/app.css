@@ -18,3 +18,7 @@ body {
     margin: 0;
     font-family: 'JetBrains Mono', monospace;
 }
+
+a, a:visited {
+    color: dodgerblue;
+}
