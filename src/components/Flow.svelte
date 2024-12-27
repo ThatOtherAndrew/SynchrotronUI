@@ -15,10 +15,20 @@
     } from '@xyflow/svelte';
 
     import '@xyflow/svelte/dist/style.css';
+    import ConnectionState from './ConnectionState.svelte';
     import Console from './Console.svelte';
 
     import SynchrotronNode from './SynchrotronNode.svelte';
     import type { components } from '../types/api';
+
+    async function testConnection() {
+        try {
+            const response = await fetch('http://localhost:2031', { signal: AbortSignal.timeout(1000) });
+            isServerConnected = response.ok && await response.json() === 'Synchrotron server running';
+        } catch {
+            isServerConnected = false;
+        }
+    }
 
     async function getAllNodes() {
         const response = await fetch('http://localhost:2031/nodes');
@@ -139,6 +149,7 @@
 
     const nodes = writable<Node[]>([]);
     const edges = writable<Edge[]>([]);
+    let isServerConnected: boolean | undefined;
     let isRendering = false;
     let theme: ColorMode = 'system';
     let files: FileList | undefined;
@@ -153,6 +164,8 @@
     }
 
     onMount(async function () {
+        await testConnection();
+        setInterval(testConnection, 2000);
         await loadGraph();
         nodes.subscribe(() => {
             $nodePositions = Object.fromEntries($nodes.map(node => [node.id, node.position]));
@@ -179,6 +192,8 @@
     <MiniMap />
 
     <Panel style="color: var(--xy-node-color-default)">
+        Synchrotron Server: <ConnectionState {isServerConnected} />
+        <br>
         Rendering:
         <button on:click={startRendering}>Start</button>
         <button on:click={stopRendering}>Stop</button>
