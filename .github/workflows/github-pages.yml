@@ -27,9 +27,9 @@ jobs:
         with:
           python-version-file: synchrotron/.python-version
       - name: Install Python dependencies
-        run: uv sync --only-dev
+        run: uv sync --project synchrotron --only-dev
       - name: Build documentation
-        run: mkdocs build --site-dir dist/docs
+        run: mkdocs build --config-file synchrotron/mkdocs.yml --site-dir ../dist/docs
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
