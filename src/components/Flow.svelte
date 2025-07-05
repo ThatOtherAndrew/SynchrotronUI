@@ -192,7 +192,7 @@
     <MiniMap />
 
     <Panel style="color: var(--xy-node-color-default)">
-        Synchrotron v0.0.0 (<a href="https://github.com/ThatOtherAndrew/Synchrotron/">What's this?</a>)
+        Synchrotron v0.1.0 (<a href="/docs">Documentation</a>) (<a href="https://github.com/ThatOtherAndrew/Synchrotron/">Source</a>)
         <br>
         <br>
         Synchrotron Server: <ConnectionState {isServerConnected} />
