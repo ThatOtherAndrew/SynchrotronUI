@@ -6,8 +6,13 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout SynchrotronUI
         uses: actions/checkout@v4
+      - name: Checkout Synchrotron
+        uses: actions/checkout@v4
+        with:
+          repository: ThatOtherAndrew/Synchrotron
+          path: synchrotron
       - name: Setup GitHub Pages
         id: pages
         uses: actions/configure-pages@v5
@@ -15,10 +20,20 @@ jobs:
         uses: oven-sh/setup-bun@v2
       - name: Build site
         run: bun install && bun run build
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: synchrotron/.python-version
+      - name: Install Python dependencies
+        run: uv sync --only-dev
+      - name: Build documentation
+        run: mkdocs build --site-dir dist/docs
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: dist
 
   deploy:
     name: Deploy
