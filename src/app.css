@@ -4,6 +4,9 @@
 
     --colour-bg-default: #eee;
     --colour-bg-accent: #ccc;
+
+    --node-saturation: 70%;
+    --node-lightness: 70%;
 }
 
 .svelte-flow.dark {
@@ -12,6 +15,9 @@
 
     --colour-bg-default: #333;
     --colour-bg-accent: #555;
+
+    --node-saturation: 45%;
+    --node-lightness: 50%;
 }
 
 body {
