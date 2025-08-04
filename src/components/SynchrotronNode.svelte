@@ -13,10 +13,17 @@
     export let data: Data;
     const { nodeData } = data;
 
+    function hash(str: string): number {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) 
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        return hash
+    }
+
     $$restProps;
 </script>
 
-<div class="node">
+<div class="node" style:--node-hue={hash($nodeData.type)}>
     <div class="handle-container inputs">
         {#each $nodeData.inputs as input}
             <Handle id={input.port_name} type="target" position={Position.Left} class="handle">
@@ -61,7 +68,7 @@
     }
 
     .node-content {
-        background-color: var(--colour-bg-accent);
+        background-color: hsl(var(--node-hue), var(--node-saturation), var(--node-lightness));
         border-radius: .3rem;
         overflow: clip;
         display: flex;
@@ -77,7 +84,7 @@
     }
 
     .header {
-        background-color: var(--colour-bg-accent);
+        background-color: transparent;
         width: max-content;
         text-align: center;
     }
