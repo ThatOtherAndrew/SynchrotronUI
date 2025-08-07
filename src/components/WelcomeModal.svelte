@@ -54,7 +54,9 @@
                 </div>
                 <p>
                     SynchrotronUI is a graphical editor for the
-                    <a href="https://github.com/ThatOtherAndrew/Synchrotron">Synchrotron</a>
+                    <a href="https://github.com/ThatOtherAndrew/Synchrotron" target="_blank"
+                        >Synchrotron</a
+                    >
                     node-based audio engine.
                 </p>
                 <p>Here's how to quickly get started:</p>
@@ -83,8 +85,9 @@
                     </li>
                     <li>
                         Tinker about with the graph! Load up another
-                        <a href="https://github.com/ThatOtherAndrew/Synchrotron/tree/main/examples"
-                            >example project</a
+                        <a
+                            href="https://github.com/ThatOtherAndrew/Synchrotron/tree/main/examples"
+                            target="_blank">example project</a
                         >, edit the links in the graph, or create some new nodes with e.g.
                         <i>new SineNode</i>.
                     </li>
