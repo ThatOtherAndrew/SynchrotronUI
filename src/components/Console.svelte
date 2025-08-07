@@ -1,24 +1,31 @@
 <script lang="ts">
-    import { Panel } from '@xyflow/svelte';
-    import { createEventDispatcher } from 'svelte';
-    import { slide } from 'svelte/transition';
+    import { Panel } from "@xyflow/svelte";
+    import { createEventDispatcher } from "svelte";
+    import { slide } from "svelte/transition";
 
     const dispatch = createEventDispatcher();
 
     type ConsoleEntry = {
-        command: string
-        return: string
-    }
+        command: string;
+        return: string;
+    };
 
     let consoleHistory: ConsoleEntry[] = [];
     let isConsoleFocused = false;
 
     async function runSynchrolangCommand(event: SubmitEvent) {
         const target = event.target as HTMLFormElement;
-        const command = new FormData(target).get('command') as string;
+        let command = new FormData(target).get("command") as string;
         target.reset();
+        if (command.trim().match(/^demo\w*;?$/g)) {
+            dispatch("demo");
+            return;
+        }
 
-        const response = await fetch('http://localhost:2031/execute', { method: 'POST', body: command });
+        const response = await fetch("http://localhost:2031/execute", {
+            method: "POST",
+            body: command,
+        });
         const return_data = await response.json();
 
         const consoleEntry: ConsoleEntry = {
@@ -28,7 +35,7 @@
         console.log(consoleEntry);
         consoleHistory = [...consoleHistory, consoleEntry];
 
-        dispatch('reload');
+        dispatch("reload");
     }
 </script>
 
@@ -45,9 +52,14 @@
             </div>
         {/if}
         <form on:submit|preventDefault={runSynchrolangCommand}>
-            <input on:focus={() => isConsoleFocused = true} on:blur={() => isConsoleFocused = false}
-                   type="text" name="command" placeholder="Send a Synchrolang command...">
-            <input type="submit" hidden>
+            <input
+                on:focus={() => (isConsoleFocused = true)}
+                on:blur={() => (isConsoleFocused = false)}
+                type="text"
+                name="command"
+                placeholder="Send a Synchrolang command..."
+            />
+            <input type="submit" hidden />
         </form>
     </aside>
 </Panel>
@@ -62,7 +74,7 @@
         margin-bottom: 1rem;
 
         .entry {
-            margin: .5rem 0;
+            margin: 0.5rem 0;
         }
 
         .command {
@@ -85,11 +97,12 @@
         width: 20em;
         color: inherit;
         background-color: var(--colour-bg-default);
-        padding: .5em 1em;
+        padding: 0.5em 1em;
         border: 3px solid var(--colour-fg-muted);
-        border-radius: .5em;
-        transition: width .5s cubic-bezier(0, 0, 0.2, 1),
-        background-color .5s ease;
+        border-radius: 0.5em;
+        transition:
+            width 0.5s cubic-bezier(0, 0, 0.2, 1),
+            background-color 0.5s ease;
     }
 
     input:focus {
