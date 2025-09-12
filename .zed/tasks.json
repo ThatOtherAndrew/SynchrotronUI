@@ -1,0 +1,13 @@
+// Project tasks configuration. See https://zed.dev/docs/tasks for documentation.
+[
+  {
+    "label": "bun dev",
+    "command": "nix develop -c bun dev",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "no_focus",
+    "reveal_target": "dock",
+    "hide": "on_success",
+    "shell": "system"
+  }
+]
