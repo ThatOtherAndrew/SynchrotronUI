@@ -1,8 +1,17 @@
 <script lang="ts">
-    let isOpen = $state(true);
+    import { browser } from '$app/environment';
+
+    let isOpen = $state(false);
+
+    if (browser && !localStorage.getItem('welcomeModalDismissed')) {
+        isOpen = true;
+    }
 
     function closeModal() {
         isOpen = false;
+        if (browser) {
+            localStorage.setItem('welcomeModalDismissed', 'true');
+        }
     }
 
     function handleKeydown(event: KeyboardEvent) {
