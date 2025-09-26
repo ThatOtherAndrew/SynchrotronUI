@@ -15,10 +15,12 @@
         return: string;
     };
 
-    let consoleHistory: ConsoleEntry[] = [];
-    let isConsoleFocused = false;
+    let consoleHistory: ConsoleEntry[] = $state([]);
+    let isConsoleFocused = $state(false);
 
     async function runSynchrolangCommand(event: SubmitEvent) {
+        event.preventDefault();
+
         const target = event.target as HTMLFormElement;
         let command = new FormData(target).get('command') as string;
         target.reset();
@@ -60,10 +62,10 @@
                 {/each}
             </div>
         {/if}
-        <form on:submit|preventDefault={runSynchrolangCommand}>
+        <form onsubmit={runSynchrolangCommand}>
             <input
-                on:focus={() => (isConsoleFocused = true)}
-                on:blur={() => (isConsoleFocused = false)}
+                onfocus={() => (isConsoleFocused = true)}
+                onblur={() => (isConsoleFocused = false)}
                 type="text"
                 name="command"
                 placeholder="Send a Synchrolang command..."
@@ -83,7 +85,7 @@
         margin-bottom: 1rem;
 
         .entry {
-            margin: 0.5rem 0;
+            padding: 0.5rem 0;
         }
 
         .command {
