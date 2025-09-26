@@ -120,6 +120,7 @@
             nodeTypes={{ synchrotron_node: Node }}
             onconnect={handleConnect}
             ondelete={handleDelete}
+            proOptions={{ hideAttribution: true }}
         >
             <Background />
             <Controls />
