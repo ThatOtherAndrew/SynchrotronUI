@@ -6,6 +6,7 @@
     import { writable } from 'svelte/store';
     import { api } from '$lib/api';
     import { onMount } from 'svelte';
+    import WelcomeModal from '../components/WelcomeModal.svelte';
 
     let nodes = $state.raw([]);
     let edges = $state.raw([]);
@@ -103,6 +104,8 @@
 </script>
 
 <main>
+    <WelcomeModal />
+
     {#if loading}
         <div class="loading">Loading nodes from server...</div>
     {:else if error}
