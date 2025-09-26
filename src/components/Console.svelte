@@ -3,6 +3,12 @@
     import { slide } from 'svelte/transition';
     import { api } from '$lib/api';
 
+    interface Props {
+        onreload?: () => void;
+    }
+
+    let { onreload }: Props = $props();
+
     type ConsoleEntry = {
         id: number;
         command: string;
@@ -35,7 +41,7 @@
 
             console.log(consoleEntry);
             consoleHistory = [...consoleHistory, consoleEntry];
-            // TODO: implement reload
+            onreload?.();
         } catch (err) {
             console.error('Failed to execute command:', err);
         }

@@ -14,6 +14,38 @@
     let loading = $state(true);
     let error = $state(null);
 
+    async function loadGraph() {
+        try {
+            const [serverNodes, connections] = await Promise.all([
+                api.getNodes(),
+                api.getConnections(),
+            ]);
+
+            nodes = serverNodes.map((node, index) => ({
+                id: node.name,
+                type: 'synchrotron_node',
+                data: {
+                    nodeData: writable(node),
+                },
+                position: nodes.find(n => n.id === node.name)?.position || {
+                    x: (index % 3) * 250,
+                    y: Math.floor(index / 3) * 200,
+                },
+            }));
+
+            edges = connections.map(conn => ({
+                id: `${conn.source.node_name}.${conn.source.port_name}->${conn.sink.node_name}.${conn.sink.port_name}`,
+                source: conn.source.node_name,
+                sourceHandle: conn.source.port_name,
+                target: conn.sink.node_name,
+                targetHandle: conn.sink.port_name,
+            }));
+        } catch (err) {
+            console.error('Failed to fetch data from server:', err);
+            error = err.message || 'Failed to connect to server';
+        }
+    }
+
     async function handleConnect(connection) {
         try {
             const newConnection = await api.addConnection({
@@ -69,38 +101,8 @@
     }
 
     onMount(async () => {
-        try {
-            const [serverNodes, connections] = await Promise.all([
-                api.getNodes(),
-                api.getConnections(),
-            ]);
-
-            nodes = serverNodes.map((node, index) => ({
-                id: node.name,
-                type: 'synchrotron_node',
-                data: {
-                    nodeData: writable(node),
-                },
-                position: {
-                    x: (index % 3) * 250,
-                    y: Math.floor(index / 3) * 200,
-                },
-            }));
-
-            edges = connections.map(conn => ({
-                id: `${conn.source.node_name}.${conn.source.port_name}->${conn.sink.node_name}.${conn.sink.port_name}`,
-                source: conn.source.node_name,
-                sourceHandle: conn.source.port_name,
-                target: conn.sink.node_name,
-                targetHandle: conn.sink.port_name,
-            }));
-
-            loading = false;
-        } catch (err) {
-            console.error('Failed to fetch data from server:', err);
-            error = err.message || 'Failed to connect to server';
-            loading = false;
-        }
+        await loadGraph();
+        loading = false;
     });
 </script>
 
@@ -123,7 +125,7 @@
             <Controls />
             <MiniMap />
 
-            <Console />
+            <Console onreload={loadGraph} />
         </SvelteFlow>
     {/if}
 </main>
@@ -140,7 +142,9 @@
         justify-content: center;
         align-items: center;
         height: 100vh;
-        font-size: 1.2rem;
+        font-size:
+            Welcome back console,
+            I missed you1.2rem;
     }
 
     .error {
