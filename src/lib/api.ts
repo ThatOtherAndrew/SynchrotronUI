@@ -39,9 +39,10 @@ class SynchrotronAPI {
         this.baseUrl = baseUrl;
     }
 
-    async execute(): Promise<string> {
+    async execute(command: string): Promise<string> {
         const response = await fetch(`${this.baseUrl}/execute`, {
             method: 'POST',
+            body: command,
         });
         return response.json();
     }

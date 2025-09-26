@@ -7,6 +7,7 @@
     import { api } from '$lib/api';
     import { onMount } from 'svelte';
     import WelcomeModal from '../components/WelcomeModal.svelte';
+    import Console from '../components/Console.svelte';
 
     let nodes = $state.raw([]);
     let edges = $state.raw([]);
@@ -121,6 +122,8 @@
             <Background />
             <Controls />
             <MiniMap />
+
+            <Console />
         </SvelteFlow>
     {/if}
 </main>
