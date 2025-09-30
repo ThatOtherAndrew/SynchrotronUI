@@ -29,7 +29,7 @@ export interface Node {
     type: string;
     inputs: Input[];
     outputs: Output[];
-    exports: Record<string, any>;
+    exports: Record<string, unknown>;
 }
 
 class SynchrotronAPI {
@@ -47,17 +47,17 @@ class SynchrotronAPI {
         return response.json();
     }
 
-    async startRendering(): Promise<any> {
+    async startRendering(): Promise<null> {
         const response = await fetch(`${this.baseUrl}/start`);
         return response.json();
     }
 
-    async stopRendering(): Promise<any> {
+    async stopRendering(): Promise<null> {
         const response = await fetch(`${this.baseUrl}/stop`);
         return response.json();
     }
 
-    async clearGraph(): Promise<any> {
+    async clearGraph(): Promise<null> {
         const response = await fetch(`${this.baseUrl}/clear`);
         return response.json();
     }
