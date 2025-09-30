@@ -17,13 +17,23 @@
 
     let consoleHistory: ConsoleEntry[] = $state([]);
     let isConsoleFocused = $state(false);
+    let commandInput: HTMLInputElement;
+    let currentCommand = $state('');
+
+    function unfocusConsole(event: FocusEvent) {
+        const newFocusTarget = event.relatedTarget as HTMLElement;
+        const consoleArea = event.currentTarget as HTMLElement;
+        if (!consoleArea?.contains(newFocusTarget)) {
+            isConsoleFocused = false;
+        }
+    }
 
     async function runSynchrolangCommand(event: SubmitEvent) {
         event.preventDefault();
 
         const target = event.target as HTMLFormElement;
         let command = new FormData(target).get('command') as string;
-        target.reset();
+        currentCommand = '';
         if (command.trim().match(/^demo\w*;?$/g)) {
             // TODO: implement demo
             return;
@@ -51,21 +61,28 @@
 </script>
 
 <Panel position="bottom-center">
-    <aside>
+    <aside onfocusin={() => (isConsoleFocused = true)} onfocusout={unfocusConsole}>
         {#if isConsoleFocused}
             <div transition:slide class="console-history">
                 {#each consoleHistory as entry (entry.id)}
-                    <div transition:slide class="entry">
+                    <button
+                        transition:slide
+                        class="entry"
+                        tabindex="0"
+                        onfocus={() => (currentCommand = entry.command)}
+                        onclick={() => commandInput.focus()}
+                    >
                         <div class="command">{entry.command}</div>
                         <div class="return">{entry.return}</div>
-                    </div>
+                    </button>
                 {/each}
             </div>
         {/if}
         <form onsubmit={runSynchrolangCommand}>
             <input
-                onfocus={() => (isConsoleFocused = true)}
-                onblur={() => (isConsoleFocused = false)}
+                bind:this={commandInput}
+                bind:value={currentCommand}
+                class:active={isConsoleFocused}
                 type="text"
                 name="command"
                 placeholder="Send a Synchrolang command..."
@@ -83,9 +100,28 @@
 
     .console-history {
         margin-bottom: 1rem;
+        max-height: 50vh;
+        overflow-y: auto;
 
         .entry {
-            padding: 0.5rem 0;
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 0.5rem 1rem;
+            font: inherit;
+            background: transparent;
+            border: 0 solid transparent;
+            border-radius: 0.25em;
+            cursor: pointer;
+            transition:
+                background-color 0.2s,
+                border-color 0.2s;
+
+            &:hover,
+            &:focus {
+                background-color: var(--colour-bg-accent);
+                border-color: var(--colour-fg-default);
+            }
         }
 
         .command {
@@ -114,10 +150,13 @@
         transition:
             width 0.5s cubic-bezier(0, 0, 0.2, 1),
             background-color 0.5s ease;
-    }
 
-    input:focus {
-        background-color: var(--colour-bg-accent);
-        width: 100%;
+        &.active {
+            width: 100%;
+        }
+
+        &:focus {
+            background-color: var(--colour-bg-accent);
+        }
     }
 </style>
