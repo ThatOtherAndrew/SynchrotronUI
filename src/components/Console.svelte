@@ -19,6 +19,8 @@
     let isConsoleFocused = $state(false);
     let commandInput: HTMLInputElement;
     let currentCommand = $state('');
+    let historyIndex = $state(-1);
+    let historyContainer: HTMLDivElement;
 
     function unfocusConsole(event: FocusEvent) {
         const newFocusTarget = event.relatedTarget as HTMLElement;
@@ -28,12 +30,68 @@
         }
     }
 
+    function smoothScrollToEntry(index: number | 'bottom') {
+        if (!historyContainer) return;
+
+        if (index === 'bottom') {
+            // Keep anchored to bottom during animation
+            const scrollToBottom = () => {
+                historyContainer.scrollTop = historyContainer.scrollHeight;
+            };
+
+            // Scroll immediately and continuously during animation
+            scrollToBottom();
+            const interval = setInterval(scrollToBottom, 16); // ~60fps
+            setTimeout(() => clearInterval(interval), 300);
+        } else {
+            queueMicrotask(() => {
+                const entry = historyContainer.children[index] as HTMLElement;
+                entry?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            });
+        }
+    }
+
+    // Scroll to bottom when new command is added
+    $effect(() => {
+        if (consoleHistory.length > 0) {
+            smoothScrollToEntry('bottom');
+        }
+    });
+
+    // Scroll to selected entry when navigating with arrow keys
+    $effect(() => {
+        if (historyIndex >= 0) {
+            const selectedIndex = consoleHistory.length - 1 - historyIndex;
+            smoothScrollToEntry(selectedIndex);
+        }
+    });
+
+    function handleKeyDown(event: KeyboardEvent) {
+        if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            if (historyIndex < consoleHistory.length - 1) {
+                historyIndex++;
+                currentCommand = consoleHistory[consoleHistory.length - 1 - historyIndex].command;
+            }
+        } else if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            if (historyIndex > 0) {
+                historyIndex--;
+                currentCommand = consoleHistory[consoleHistory.length - 1 - historyIndex].command;
+            } else if (historyIndex === 0) {
+                historyIndex = -1;
+                currentCommand = '';
+            }
+        }
+    }
+
     async function runSynchrolangCommand(event: SubmitEvent) {
         event.preventDefault();
 
         const target = event.target as HTMLFormElement;
         let command = new FormData(target).get('command') as string;
         currentCommand = '';
+        historyIndex = -1;
         if (command.trim().match(/^demo\w*;?$/g)) {
             // TODO: implement demo
             return;
@@ -63,11 +121,12 @@
 <Panel position="bottom-center">
     <aside onfocusin={() => (isConsoleFocused = true)} onfocusout={unfocusConsole}>
         {#if isConsoleFocused}
-            <div transition:slide class="console-history">
-                {#each consoleHistory as entry (entry.id)}
+            <div bind:this={historyContainer} transition:slide class="console-history">
+                {#each consoleHistory as entry, index (entry.id)}
                     <button
                         transition:slide
                         class="entry"
+                        class:selected={historyIndex === consoleHistory.length - 1 - index}
                         tabindex="0"
                         onfocus={() => (currentCommand = entry.command)}
                         onclick={() => commandInput.focus()}
@@ -86,6 +145,7 @@
                 type="text"
                 name="command"
                 placeholder="Send a Synchrolang command..."
+                onkeydown={handleKeyDown}
             />
             <input type="submit" hidden />
         </form>
@@ -102,6 +162,11 @@
         margin-bottom: 1rem;
         max-height: 50vh;
         overflow-y: auto;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
 
         .entry {
             display: block;
@@ -119,6 +184,11 @@
 
             &:hover,
             &:focus {
+                background-color: var(--colour-bg-accent);
+                border-color: var(--colour-fg-default);
+            }
+
+            &.selected {
                 background-color: var(--colour-bg-accent);
                 border-color: var(--colour-fg-default);
             }
