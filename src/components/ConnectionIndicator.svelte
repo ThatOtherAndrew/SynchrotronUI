@@ -3,14 +3,14 @@
 </script>
 
 <script lang="ts">
-    let { connectionState }: { connectionState: ConnectionState } = $props();
+    import { appState } from '$lib/state.svelte';
 </script>
 
-{#if connectionState === 'connected'}
+{#if appState.connectionState === 'connected'}
     <span style="color: lightgreen">Connected</span>
-{:else if connectionState === 'disconnected'}
+{:else if appState.connectionState === 'disconnected'}
     <span style="color: red">Disconnected</span>
-{:else if connectionState === 'connecting'}
+{:else if appState.connectionState === 'connecting'}
     <span style="color: grey">Connecting...</span>
 {:else}
     <span style="color: red">Unknown</span>

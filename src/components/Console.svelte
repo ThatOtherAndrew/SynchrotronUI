@@ -3,12 +3,7 @@
     import { slide } from 'svelte/transition';
     import { type SynchrotronAPI } from '$lib/api';
 
-    interface Props {
-        api: SynchrotronAPI;
-        onreload?: () => void;
-    }
-
-    let { api, onreload }: Props = $props();
+    let { api }: { api: SynchrotronAPI } = $props();
 
     type ConsoleEntry = {
         id: number;
@@ -139,7 +134,7 @@
 
             console.log(consoleEntry);
             consoleHistory = [...consoleHistory, consoleEntry];
-            onreload?.();
+            api.loadGraph();
         } catch (err) {
             console.error('Failed to execute command:', err);
         }

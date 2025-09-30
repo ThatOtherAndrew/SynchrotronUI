@@ -1,16 +1,10 @@
 <script lang="ts">
-    import { Panel, type ColorMode } from '@xyflow/svelte';
-    import ConnectionIndicator, { type ConnectionState } from './ConnectionIndicator.svelte';
+    import { Panel } from '@xyflow/svelte';
+    import ConnectionIndicator from './ConnectionIndicator.svelte';
     import type { SynchrotronAPI } from '$lib/api';
+    import { appState } from '$lib/state.svelte';
 
-    interface Props {
-        api: SynchrotronAPI;
-        connectionState: ConnectionState;
-        loadGraph: () => Promise<void>;
-        theme?: ColorMode;
-    }
-
-    let { api, connectionState, loadGraph, theme = $bindable('system') }: Props = $props();
+    let { api }: { api: SynchrotronAPI } = $props();
 
     let files: FileList | undefined = $state();
 
@@ -32,13 +26,13 @@
 
     async function resetGraph() {
         // Reset node positions by reloading
-        await loadGraph();
+        await api.loadGraph();
     }
 
     async function clearGraph() {
         try {
             await api.clearGraph();
-            await loadGraph();
+            await api.loadGraph();
         } catch (err) {
             console.error('Failed to clear graph:', err);
         }
@@ -65,9 +59,8 @@
         try {
             const file = files[0];
             const content = await file.text();
-            console.debug(content);
             await api.execute(content);
-            await loadGraph();
+            await api.loadGraph();
         } catch (err) {
             console.error('Failed to load file:', err);
         }
@@ -81,21 +74,21 @@
         >)
         <br />
         <br />
-        Synchrotron Server: <ConnectionIndicator {connectionState} />
+        Synchrotron Server: <ConnectionIndicator />
         <br />
         Rendering:
         <button onclick={startRendering}>Start</button>
         <button onclick={stopRendering}>Stop</button>
         <br />
         Theme:
-        <select bind:value={theme}>
+        <select bind:value={appState.theme}>
             <option value="system">System</option>
             <option value="light">Light</option>
             <option value="dark">Dark</option>
         </select>
         <br />
         Graph:
-        <button onclick={loadGraph}>Reload</button>
+        <button onclick={api.loadGraph}>Reload</button>
         <button onclick={resetGraph}>Reset Positions</button>
         <button onclick={clearGraph}>Clear</button>
         <br />

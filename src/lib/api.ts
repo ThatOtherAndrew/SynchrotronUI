@@ -1,3 +1,6 @@
+import { writable } from 'svelte/store';
+import { appState } from './state.svelte';
+
 const API_BASE_URL = 'http://localhost:2031';
 
 export interface Port {
@@ -37,6 +40,41 @@ export class SynchrotronAPI {
 
     constructor(baseUrl: string = API_BASE_URL) {
         this.baseUrl = baseUrl;
+    }
+
+    async loadGraph() {
+        appState.connectionState = 'connecting';
+        try {
+            const [serverNodes, connections] = await Promise.all([
+                this.getNodes(),
+                this.getConnections(),
+            ]);
+
+            appState.nodes = serverNodes.map((node, index) => ({
+                id: node.name,
+                type: 'synchrotron_node',
+                data: {
+                    nodeData: writable(node),
+                },
+                position: appState.nodes.find(n => n.id === node.name)?.position || {
+                    x: (index % 3) * 250,
+                    y: Math.floor(index / 3) * 200,
+                },
+            }));
+
+            appState.edges = connections.map(conn => ({
+                id: `${conn.source.node_name}.${conn.source.port_name}->${conn.sink.node_name}.${conn.sink.port_name}`,
+                source: conn.source.node_name,
+                sourceHandle: conn.source.port_name,
+                target: conn.sink.node_name,
+                targetHandle: conn.sink.port_name,
+            }));
+
+            appState.connectionState = 'connected';
+        } catch (err) {
+            appState.connectionState = 'disconnected';
+            console.error('Failed to fetch data from server:', err);
+        }
     }
 
     async loadFile(files: FileList) {
@@ -82,6 +120,9 @@ export class SynchrotronAPI {
 
     async getNodes(): Promise<Node[]> {
         const response = await fetch(`${this.baseUrl}/nodes`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch nodes: ${response.status} ${response.statusText}`);
+        }
         return response.json();
     }
 
@@ -116,6 +157,9 @@ export class SynchrotronAPI {
 
     async getConnections(): Promise<Connection[]> {
         const response = await fetch(`${this.baseUrl}/connections`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch connections: ${response.status} ${response.statusText}`);
+        }
         return response.json();
     }
 
