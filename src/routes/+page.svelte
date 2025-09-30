@@ -1,5 +1,13 @@
-<script>
-    import { Background, Controls, MiniMap, SvelteFlow } from '@xyflow/svelte';
+<script lang="ts">
+    import {
+        Background,
+        Controls,
+        MiniMap,
+        SvelteFlow,
+        type ColorMode,
+        type Edge as EdgeData,
+        type Node as NodeData,
+    } from '@xyflow/svelte';
     import '@xyflow/svelte/dist/base.css';
     import '../app.css';
     import Node from '../components/Node.svelte';
@@ -8,13 +16,16 @@
     import { onMount } from 'svelte';
     import WelcomeModal from '../components/WelcomeModal.svelte';
     import Console from '../components/Console.svelte';
+    import ControlPanel from '../components/ControlPanel.svelte';
+    import { type ConnectionState } from '../components/ConnectionIndicator.svelte';
 
-    let nodes = $state.raw([]);
-    let edges = $state.raw([]);
-    let loading = $state(true);
-    let error = $state(null);
+    let nodes: NodeData[] = $state.raw([]);
+    let edges: EdgeData[] = $state.raw([]);
+    let connectionState: ConnectionState = $state(null);
+    let theme: ColorMode = $state('system');
 
     async function loadGraph() {
+        connectionState = 'connecting';
         try {
             const [serverNodes, connections] = await Promise.all([
                 api.getNodes(),
@@ -40,115 +51,38 @@
                 target: conn.sink.node_name,
                 targetHandle: conn.sink.port_name,
             }));
+
+            connectionState = 'connected';
         } catch (err) {
+            connectionState = 'disconnected';
             console.error('Failed to fetch data from server:', err);
-            error = err.message || 'Failed to connect to server';
         }
     }
 
-    async function handleConnect(connection) {
-        try {
-            const newConnection = await api.addConnection({
-                source: {
-                    node_name: connection.source,
-                    port_name: connection.sourceHandle,
-                },
-                sink: {
-                    node_name: connection.target,
-                    port_name: connection.targetHandle,
-                },
-            });
-
-            const edgeId = `${newConnection.source.node_name}.${newConnection.source.port_name}->${newConnection.sink.node_name}.${newConnection.sink.port_name}`;
-            edges = [
-                ...edges,
-                {
-                    id: edgeId,
-                    source: newConnection.source.node_name,
-                    sourceHandle: newConnection.source.port_name,
-                    target: newConnection.sink.node_name,
-                    targetHandle: newConnection.sink.port_name,
-                },
-            ];
-        } catch (err) {
-            console.error('Failed to create connection:', err);
-        }
-    }
-
-    async function handleDelete(params) {
-        try {
-            // Delete nodes from server
-            for (const node of params.nodes) {
-                await api.removeNode(node.id);
-            }
-
-            // Delete edges from server
-            for (const edge of params.edges) {
-                await api.removeConnection({
-                    source: {
-                        node_name: edge.source,
-                        port_name: edge.sourceHandle,
-                    },
-                    sink: {
-                        node_name: edge.target,
-                        port_name: edge.targetHandle,
-                    },
-                });
-            }
-        } catch (err) {
-            console.error('Failed to delete items:', err);
-        }
-    }
-
-    onMount(async () => {
-        await loadGraph();
-        loading = false;
-    });
+    onMount(loadGraph);
 </script>
 
 <main>
     <WelcomeModal />
+    <SvelteFlow
+        bind:nodes
+        bind:edges
+        nodeTypes={{ synchrotron_node: Node }}
+        colorMode={theme}
+        proOptions={{ hideAttribution: true }}
+    >
+        <Background />
+        <Controls />
+        <MiniMap />
 
-    {#if loading}
-        <div class="loading">Loading nodes from server...</div>
-    {:else if error}
-        <div class="error">Error: {error}</div>
-    {:else}
-        <SvelteFlow
-            bind:nodes
-            bind:edges
-            nodeTypes={{ synchrotron_node: Node }}
-            onconnect={handleConnect}
-            ondelete={handleDelete}
-            proOptions={{ hideAttribution: true }}
-        >
-            <Background />
-            <Controls />
-            <MiniMap />
-
-            <Console onreload={loadGraph} />
-        </SvelteFlow>
-    {/if}
+        <ControlPanel bind:theme {connectionState} {loadGraph} />
+        <Console onreload={loadGraph} />
+    </SvelteFlow>
 </main>
 
 <style>
     main {
         width: 100vw;
         height: 100vh;
-    }
-
-    .loading,
-    .error {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        font-size:
-            Welcome back console,
-            I missed you1.2rem;
-    }
-
-    .error {
-        color: #ff4444;
     }
 </style>
