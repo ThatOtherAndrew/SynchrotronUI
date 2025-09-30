@@ -21,6 +21,20 @@
     let currentCommand = $state('');
     let historyIndex = $state(-1);
     let historyContainer: HTMLDivElement;
+    let savedCommand = $state('');
+    let scrollTop = $state(0);
+
+    // Gradually fade in transparency mask over first 50px of scroll
+    let maskGradient = $derived.by(() => {
+        const fadeDistance = 50;
+        const scrollRatio = Math.min(scrollTop / fadeDistance, 1);
+        const startAlpha = 1 - scrollRatio;
+        return `linear-gradient(to bottom, rgba(0,0,0,${startAlpha}) 0%, black 30%)`;
+    });
+
+    function handleScroll(event: Event) {
+        scrollTop = (event.target as HTMLDivElement).scrollTop;
+    }
 
     function unfocusConsole(event: FocusEvent) {
         const newFocusTarget = event.relatedTarget as HTMLElement;
@@ -69,6 +83,9 @@
     function handleKeyDown(event: KeyboardEvent) {
         if (event.key === 'ArrowUp') {
             event.preventDefault();
+            if (historyIndex === -1) {
+                savedCommand = currentCommand;
+            }
             if (historyIndex < consoleHistory.length - 1) {
                 historyIndex++;
                 currentCommand = consoleHistory[consoleHistory.length - 1 - historyIndex].command;
@@ -80,8 +97,16 @@
                 currentCommand = consoleHistory[consoleHistory.length - 1 - historyIndex].command;
             } else if (historyIndex === 0) {
                 historyIndex = -1;
-                currentCommand = '';
+                currentCommand = savedCommand;
+                savedCommand = '';
             }
+        }
+    }
+
+    function handleInput() {
+        if (historyIndex !== -1) {
+            savedCommand = currentCommand;
+            historyIndex = -1;
         }
     }
 
@@ -92,6 +117,7 @@
         let command = new FormData(target).get('command') as string;
         currentCommand = '';
         historyIndex = -1;
+        savedCommand = '';
         if (command.trim().match(/^demo\w*;?$/g)) {
             // TODO: implement demo
             return;
@@ -121,7 +147,13 @@
 <Panel position="bottom-center">
     <aside onfocusin={() => (isConsoleFocused = true)} onfocusout={unfocusConsole}>
         {#if isConsoleFocused}
-            <div bind:this={historyContainer} transition:slide class="console-history">
+            <div
+                bind:this={historyContainer}
+                transition:slide
+                class="console-history"
+                onscroll={handleScroll}
+                style="mask-image: {maskGradient}"
+            >
                 {#each consoleHistory as entry, index (entry.id)}
                     <button
                         transition:slide
@@ -146,6 +178,7 @@
                 name="command"
                 placeholder="Send a Synchrolang command..."
                 onkeydown={handleKeyDown}
+                oninput={handleInput}
             />
             <input type="submit" hidden />
         </form>
@@ -163,6 +196,7 @@
         max-height: 50vh;
         overflow-y: auto;
         scrollbar-width: none;
+        position: relative;
 
         &::-webkit-scrollbar {
             display: none;
