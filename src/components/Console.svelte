@@ -20,6 +20,7 @@
     let commandInput: HTMLInputElement;
     let currentCommand = $state('');
     let historyIndex = $state(-1);
+    // svelte-ignore non_reactive_update
     let historyContainer: HTMLDivElement;
     let savedCommand = $state('');
     let scrollTop = $state(0);
