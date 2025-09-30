@@ -32,11 +32,24 @@ export interface Node {
     exports: Record<string, unknown>;
 }
 
-class SynchrotronAPI {
+export class SynchrotronAPI {
     private baseUrl: string;
 
     constructor(baseUrl: string = API_BASE_URL) {
         this.baseUrl = baseUrl;
+    }
+
+    async loadFile(files: FileList) {
+        if (files === undefined) return;
+
+        const fileContent = await files[0].text();
+        // const nodePositionRegex: RegExp = /(?<=\/\*\*\*)\s*{.*}\s*(?=\*\*\*\/)/m;
+        // const nodePositionsString = fileContent.match(nodePositionRegex);
+        // if (nodePositionsString) {
+        //     $nodePositions = JSON.parse(nodePositionsString[0].trim());
+        // }
+
+        await this.execute(`clear;\n\n${fileContent}`);
     }
 
     async execute(command: string): Promise<string> {
@@ -128,5 +141,3 @@ class SynchrotronAPI {
         return response.json();
     }
 }
-
-export const api = new SynchrotronAPI();

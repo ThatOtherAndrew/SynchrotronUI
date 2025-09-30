@@ -12,7 +12,7 @@
     import '../app.css';
     import Node from '../components/Node.svelte';
     import { writable } from 'svelte/store';
-    import { api } from '$lib/api';
+    import { SynchrotronAPI } from '$lib/api';
     import { onMount } from 'svelte';
     import WelcomeModal from '../components/WelcomeModal.svelte';
     import Console from '../components/Console.svelte';
@@ -23,6 +23,8 @@
     let edges: EdgeData[] = $state.raw([]);
     let connectionState: ConnectionState = $state(null);
     let theme: ColorMode = $state('system');
+
+    let api = new SynchrotronAPI();
 
     async function loadGraph() {
         connectionState = 'connecting';
@@ -75,8 +77,8 @@
         <Controls />
         <MiniMap />
 
-        <ControlPanel bind:theme {connectionState} {loadGraph} />
-        <Console onreload={loadGraph} />
+        <ControlPanel bind:theme {api} {connectionState} {loadGraph} />
+        <Console {api} onreload={loadGraph} />
     </SvelteFlow>
 </main>
 

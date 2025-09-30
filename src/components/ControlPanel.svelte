@@ -1,11 +1,18 @@
 <script lang="ts">
-    import { Panel } from '@xyflow/svelte';
-    import ConnectionIndicator from './ConnectionIndicator.svelte';
-    import { api } from '$lib/api';
+    import { Panel, type ColorMode } from '@xyflow/svelte';
+    import ConnectionIndicator, { type ConnectionState } from './ConnectionIndicator.svelte';
+    import type { SynchrotronAPI } from '$lib/api';
 
-    let { connectionState, loadGraph, theme = $bindable('system') } = $props();
+    interface Props {
+        api: SynchrotronAPI;
+        connectionState: ConnectionState;
+        loadGraph: () => Promise<void>;
+        theme?: ColorMode;
+    }
 
-    let files = $state();
+    let { api, connectionState, loadGraph, theme = $bindable('system') }: Props = $props();
+
+    let files: FileList | undefined = $state();
 
     async function startRendering() {
         try {
@@ -58,6 +65,7 @@
         try {
             const file = files[0];
             const content = await file.text();
+            console.debug(content);
             await api.execute(content);
             await loadGraph();
         } catch (err) {
