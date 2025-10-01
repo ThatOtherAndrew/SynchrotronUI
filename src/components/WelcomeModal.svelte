@@ -23,6 +23,15 @@
     }
 </script>
 
+<svelte:head>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Jaini&family=IM+Fell+English&display=swap"
+        rel="stylesheet"
+    />
+</svelte:head>
+
 <svelte:window on:keydown={handleKeydown} />
 
 {#if isOpen}
@@ -42,6 +51,22 @@
             </div>
 
             <div class="modal-body">
+                <div class="banner">
+                    <img
+                        src="https://siege.hackclub.com/assets/logo-55998110.webp"
+                        alt="Siege logo"
+                        class="banner-logo"
+                    />
+                    <div class="banner-content">
+                        <h3>Reviewing for Siege?</h3>
+                        <p>
+                            Click <a
+                                href="https://photos.app.goo.gl/Fv1KwexQ9pViALyv5"
+                                target="_blank">here</a
+                            > for a demo video!
+                        </p>
+                    </div>
+                </div>
                 <div class="video-container">
                     <iframe
                         src="https://www.youtube.com/embed/txflkMDjk4A"
@@ -188,6 +213,49 @@
         margin: 0.5rem 0;
         font-size: 0.9rem;
         line-height: 1.4;
+    }
+
+    .banner {
+        background-image: url('https://siege.hackclub.com/assets/scroll-aca243bf.webp');
+        background-position: center;
+        background-size: 150%;
+        border-left: 4px solid var(--colour-fg-default);
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .banner-logo {
+        width: 64px;
+        height: 64px;
+        object-fit: contain;
+        flex-shrink: 0;
+    }
+
+    .banner-content {
+        flex: 1;
+    }
+
+    .banner h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+        font-family: 'Jaini', cursive;
+        color: #3b2a1a;
+    }
+
+    .banner p {
+        margin: 0;
+        font-size: 1.2rem;
+        font-family: 'IM Fell English', serif;
+        color: #3b2a1a;
+    }
+
+    .banner a {
+        color: #3b2a1a;
     }
 
     .video-container {
