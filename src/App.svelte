@@ -8,7 +8,7 @@
     let showWelcomeModal = false;
 
     onMount(() => {
-        if (isFirstVisit()) {
+        if (isFirstVisit() || true) {
             showWelcomeModal = true;
         }
     });
