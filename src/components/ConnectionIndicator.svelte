@@ -11,23 +11,46 @@
     let displayConnectionState = $derived(
         connectionState[0].toUpperCase() + connectionState.slice(1)
     );
+
+    let measureElement: HTMLSpanElement;
+    let widths = $state<Record<ConnectionState, number>>({
+        connecting: 0,
+        connected: 0,
+        disconnected: 0
+    });
+
+    $effect(() => {
+        if (measureElement) {
+            const states: ConnectionState[] = ['connecting', 'connected', 'disconnected'];
+            states.forEach((state) => {
+                const label = state[0].toUpperCase() + state.slice(1);
+                measureElement.textContent = label;
+                widths[state] = measureElement.offsetWidth;
+            });
+        }
+    });
+
+    let targetWidth = $derived(widths[connectionState]);
 </script>
 
 <Panel position="top-left">
     <div class="indicator {connectionState}">
         <span class="circle"></span>
-        <div class="label-container">
+        <div class="label-container" style:width={targetWidth ? `${targetWidth}px` : 'auto'}>
             {#key connectionState}
                 <span
                     class="label"
-                    in:fly={{ x: -10, duration: 200, delay: 150 }}
-                    out:fly={{ x: 10, duration: 150 }}
+                    in:fly={{ y: 10, duration: 200, delay: 150 }}
+                    out:fly={{ y: -10, duration: 150 }}
                 >
                     {displayConnectionState}
                 </span>
             {/key}
         </div>
     </div>
+
+    <!-- Hidden measurement element -->
+    <span class="label measure" bind:this={measureElement}></span>
 </Panel>
 
 <style lang="scss">
@@ -46,8 +69,7 @@
         backdrop-filter: blur(4px);
         transition:
             color 0.5s ease,
-            background-color 0.5s ease,
-            width 0.3s ease;
+            background-color 0.5s ease;
 
         &.connected {
             color: limegreen;
@@ -69,9 +91,17 @@
 
     .label-container {
         display: grid;
+        transition: width 0.3s ease;
 
         > * {
             grid-area: 1 / 1;
         }
+    }
+
+    .label.measure {
+        position: absolute;
+        visibility: hidden;
+        pointer-events: none;
+        white-space: nowrap;
     }
 </style>
