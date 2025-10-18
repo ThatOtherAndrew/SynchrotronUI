@@ -20,6 +20,8 @@
 </Panel>
 
 <style lang="scss">
+    @use 'sass:color';
+
     .indicator {
         display: flex;
         align-items: center;
@@ -30,6 +32,9 @@
         color: lightgrey;
         background-color: rgba(dimgrey, 0.75);
         backdrop-filter: blur(4px);
+        transition:
+            color 0.5s ease,
+            background-color 0.5s ease;
 
         &.connected {
             color: limegreen;
@@ -38,7 +43,7 @@
 
         &.disconnected {
             color: red;
-            background-color: rgba(darken(darkred, 10%), 0.75);
+            background-color: rgba(color.adjust(darkred, $lightness: -10%), 0.75);
         }
     }
 

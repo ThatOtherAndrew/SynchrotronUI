@@ -43,7 +43,10 @@ export class SynchrotronAPI {
     }
 
     async loadGraph() {
-        appState.connectionState = 'connecting';
+        if (appState.connectionState !== 'connected') {
+            appState.connectionState = 'connecting';
+        }
+
         try {
             const [serverNodes, connections] = await Promise.all([
                 this.getNodes(),
@@ -158,7 +161,9 @@ export class SynchrotronAPI {
     async getConnections(): Promise<Connection[]> {
         const response = await fetch(`${this.baseUrl}/connections`);
         if (!response.ok) {
-            throw new Error(`Failed to fetch connections: ${response.status} ${response.statusText}`);
+            throw new Error(
+                `Failed to fetch connections: ${response.status} ${response.statusText}`
+            );
         }
         return response.json();
     }
