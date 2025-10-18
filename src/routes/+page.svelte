@@ -10,6 +10,7 @@
     import ControlPanel from '../components/ControlPanel.svelte';
 
     import { appState } from '$lib/state.svelte';
+    import ConnectionIndicator from '../components/ConnectionIndicator.svelte';
 
     let api = new SynchrotronAPI();
 
@@ -29,6 +30,9 @@
         <Controls />
         <MiniMap />
 
+        {#if appState.connectionState !== null}
+            <ConnectionIndicator connectionState={appState.connectionState} />
+        {/if}
         <ControlPanel {api} />
         <Console {api} />
     </SvelteFlow>

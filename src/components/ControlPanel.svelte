@@ -74,8 +74,6 @@
         >)
         <br />
         <br />
-        Synchrotron Server: <ConnectionIndicator />
-        <br />
         Rendering:
         <button onclick={startRendering}>Start</button>
         <button onclick={stopRendering}>Stop</button>

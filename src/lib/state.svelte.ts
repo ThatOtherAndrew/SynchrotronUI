@@ -4,7 +4,7 @@ import { type ConnectionState } from '../components/ConnectionIndicator.svelte';
 interface AppState {
     nodes: NodeData[];
     edges: EdgeData[];
-    connectionState: ConnectionState;
+    connectionState: ConnectionState | null;
     theme: ColorMode;
 }
 
