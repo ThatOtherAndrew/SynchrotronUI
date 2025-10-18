@@ -86,7 +86,7 @@
         </select>
         <br />
         Graph:
-        <button onclick={api.loadGraph}>Reload</button>
+        <button onclick={() => api.loadGraph()}>Reload</button>
         <button onclick={resetGraph}>Reset Positions</button>
         <button onclick={clearGraph}>Clear</button>
         <br />
