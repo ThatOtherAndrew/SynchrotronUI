@@ -42,13 +42,19 @@
 
     const handleDelete: OnDelete = async ({ nodes, edges }) => {
         try {
-            // Delete nodes
+            // Delete nodes first
             for (const node of nodes) {
                 await api.removeNode(node.id);
             }
 
-            // Delete edges
-            for (const edge of edges) {
+            // Only delete edges where BOTH endpoints are NOT being deleted
+            // (edges connected to deleted nodes are auto-removed by the server)
+            const deletedNodeIds = new Set(nodes.map(n => n.id));
+            const edgesToDelete = edges.filter(edge =>
+                !deletedNodeIds.has(edge.source) && !deletedNodeIds.has(edge.target)
+            );
+
+            for (const edge of edgesToDelete) {
                 if (!edge.source || !edge.target || !edge.sourceHandle || !edge.targetHandle) {
                     continue;
                 }
