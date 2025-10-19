@@ -1,10 +1,8 @@
 <script lang="ts">
     import { Panel } from '@xyflow/svelte';
     import ConnectionIndicator from './ConnectionIndicator.svelte';
-    import type { SynchrotronAPI } from '$lib/api';
+    import { api } from '$lib/api';
     import { appState } from '$lib/state.svelte';
-
-    let { api }: { api: SynchrotronAPI } = $props();
 
     let files: FileList | undefined = $state();
 

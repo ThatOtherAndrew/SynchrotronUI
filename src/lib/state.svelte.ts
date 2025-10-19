@@ -2,6 +2,7 @@ import { type ColorMode, type Edge as EdgeData, type Node as NodeData } from '@x
 import { type ConnectionState } from '../components/ConnectionIndicator.svelte';
 
 interface AppState {
+    serverUrl: string;
     nodes: NodeData[];
     edges: EdgeData[];
     connectionState: ConnectionState | null;
@@ -9,6 +10,7 @@ interface AppState {
 }
 
 export const appState: AppState = $state({
+    serverUrl: 'http://localhost:2031',
     nodes: [],
     edges: [],
     connectionState: null,

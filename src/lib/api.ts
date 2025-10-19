@@ -1,8 +1,6 @@
 import { writable } from 'svelte/store';
 import { appState } from './state.svelte';
 
-const API_BASE_URL = 'http://localhost:2031';
-
 export interface Port {
     node_name: string;
     port_name: string;
@@ -36,12 +34,6 @@ export interface Node {
 }
 
 export class SynchrotronAPI {
-    private baseUrl: string;
-
-    constructor(baseUrl: string = API_BASE_URL) {
-        this.baseUrl = baseUrl;
-    }
-
     async loadGraph() {
         if (appState.connectionState !== 'connected') {
             appState.connectionState = 'connecting';
@@ -94,7 +86,7 @@ export class SynchrotronAPI {
     }
 
     async execute(command: string): Promise<string> {
-        const response = await fetch(`${this.baseUrl}/execute`, {
+        const response = await fetch(`${appState.serverUrl}/execute`, {
             method: 'POST',
             body: command,
         });
@@ -102,27 +94,27 @@ export class SynchrotronAPI {
     }
 
     async startRendering(): Promise<null> {
-        const response = await fetch(`${this.baseUrl}/start`);
+        const response = await fetch(`${appState.serverUrl}/start`);
         return response.json();
     }
 
     async stopRendering(): Promise<null> {
-        const response = await fetch(`${this.baseUrl}/stop`);
+        const response = await fetch(`${appState.serverUrl}/stop`);
         return response.json();
     }
 
     async clearGraph(): Promise<null> {
-        const response = await fetch(`${this.baseUrl}/clear`);
+        const response = await fetch(`${appState.serverUrl}/clear`);
         return response.json();
     }
 
     async exportState(): Promise<string> {
-        const response = await fetch(`${this.baseUrl}/export`);
+        const response = await fetch(`${appState.serverUrl}/export`);
         return response.json();
     }
 
     async getNodes(): Promise<Node[]> {
-        const response = await fetch(`${this.baseUrl}/nodes`);
+        const response = await fetch(`${appState.serverUrl}/nodes`);
         if (!response.ok) {
             throw new Error(`Failed to fetch nodes: ${response.status} ${response.statusText}`);
         }
@@ -130,20 +122,20 @@ export class SynchrotronAPI {
     }
 
     async createUnnamedNode(type: string): Promise<Node> {
-        const response = await fetch(`${this.baseUrl}/nodes?type=${encodeURIComponent(type)}`, {
+        const response = await fetch(`${appState.serverUrl}/nodes?type=${encodeURIComponent(type)}`, {
             method: 'POST',
         });
         return response.json();
     }
 
     async getNodeByName(nodeName: string): Promise<Node> {
-        const response = await fetch(`${this.baseUrl}/nodes/${encodeURIComponent(nodeName)}`);
+        const response = await fetch(`${appState.serverUrl}/nodes/${encodeURIComponent(nodeName)}`);
         return response.json();
     }
 
     async createNode(nodeName: string, type: string): Promise<Node> {
         const response = await fetch(
-            `${this.baseUrl}/nodes/${encodeURIComponent(nodeName)}?type=${encodeURIComponent(type)}`,
+            `${appState.serverUrl}/nodes/${encodeURIComponent(nodeName)}?type=${encodeURIComponent(type)}`,
             {
                 method: 'POST',
             }
@@ -152,14 +144,14 @@ export class SynchrotronAPI {
     }
 
     async removeNode(nodeName: string): Promise<Node> {
-        const response = await fetch(`${this.baseUrl}/nodes/${encodeURIComponent(nodeName)}`, {
+        const response = await fetch(`${appState.serverUrl}/nodes/${encodeURIComponent(nodeName)}`, {
             method: 'DELETE',
         });
         return response.json();
     }
 
     async getConnections(): Promise<Connection[]> {
-        const response = await fetch(`${this.baseUrl}/connections`);
+        const response = await fetch(`${appState.serverUrl}/connections`);
         if (!response.ok) {
             throw new Error(
                 `Failed to fetch connections: ${response.status} ${response.statusText}`
@@ -169,7 +161,7 @@ export class SynchrotronAPI {
     }
 
     async addConnection(connection: Connection): Promise<Connection> {
-        const response = await fetch(`${this.baseUrl}/connections`, {
+        const response = await fetch(`${appState.serverUrl}/connections`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -180,7 +172,7 @@ export class SynchrotronAPI {
     }
 
     async removeConnection(connection: Connection): Promise<Connection | null> {
-        const response = await fetch(`${this.baseUrl}/connections`, {
+        const response = await fetch(`${appState.serverUrl}/connections`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -190,3 +182,5 @@ export class SynchrotronAPI {
         return response.json();
     }
 }
+
+export const api = new SynchrotronAPI();

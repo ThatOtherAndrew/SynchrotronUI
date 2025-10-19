@@ -1,9 +1,7 @@
 <script lang="ts">
     import { Panel } from '@xyflow/svelte';
     import { slide } from 'svelte/transition';
-    import { type SynchrotronAPI } from '$lib/api';
-
-    let { api }: { api: SynchrotronAPI } = $props();
+    import { api } from '$lib/api';
 
     type ConsoleEntry = {
         id: number;
