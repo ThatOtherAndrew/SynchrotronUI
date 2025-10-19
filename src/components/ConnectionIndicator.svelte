@@ -12,7 +12,12 @@
         connectionState[0].toUpperCase() + connectionState.slice(1)
     );
 
-    let measureElement: HTMLSpanElement;
+    let measureElements: Record<ConnectionState, HTMLSpanElement | undefined> = $state({
+        connecting: undefined,
+        connected: undefined,
+        disconnected: undefined
+    });
+
     let widths = $state<Record<ConnectionState, number>>({
         connecting: 0,
         connected: 0,
@@ -20,14 +25,13 @@
     });
 
     $effect(() => {
-        if (measureElement) {
-            const states: ConnectionState[] = ['connecting', 'connected', 'disconnected'];
-            states.forEach((state) => {
-                const label = state[0].toUpperCase() + state.slice(1);
-                measureElement.textContent = label;
-                widths[state] = measureElement.offsetWidth;
-            });
-        }
+        const states: ConnectionState[] = ['connecting', 'connected', 'disconnected'];
+        states.forEach((state) => {
+            const element = measureElements[state];
+            if (element) {
+                widths[state] = element.offsetWidth;
+            }
+        });
     });
 
     let targetWidth = $derived(widths[connectionState]);
@@ -49,8 +53,10 @@
         </div>
     </div>
 
-    <!-- Hidden measurement element -->
-    <span class="label measure" bind:this={measureElement}></span>
+    <!-- Hidden measurement elements -->
+    <span class="label measure" bind:this={measureElements.connecting}>Connecting</span>
+    <span class="label measure" bind:this={measureElements.connected}>Connected</span>
+    <span class="label measure" bind:this={measureElements.disconnected}>Disconnected</span>
 </Panel>
 
 <style lang="scss">
