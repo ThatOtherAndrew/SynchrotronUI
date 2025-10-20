@@ -61,9 +61,9 @@
                         <h3>Reviewing for Siege?</h3>
                         <p>
                             Click <a
-                                href="https://photos.app.goo.gl/QtyC6dstNNNz4Yrq6"
+                                href="https://photos.app.goo.gl/3mqc8Aexv36embNQ6"
                                 target="_blank">here</a
-                            > for a demo video!
+                            > for some <b>✨updated✨</b> demo videos!
                         </p>
                     </div>
                 </div>
